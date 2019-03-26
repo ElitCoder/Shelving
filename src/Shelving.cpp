@@ -1,5 +1,6 @@
 #include "Log.h"
 #include "Config.h"
+#include "Calculate.h"
 
 #include <vector>
 
@@ -17,7 +18,13 @@ bool parse() {
 }
 
 bool run() {
-    return true;
+    // Make sure input file and input type is set
+    if (!Config::has(KEY_INPUT) || !Config::has(KEY_INPUT_TYPE)) {
+        Log(ERR) << "No input file or input type specified in config\n";
+        return false;
+    }
+
+    return calculate();
 }
 
 int main() {

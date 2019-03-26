@@ -95,3 +95,7 @@ bool Config::parse_common(const string& filename) {
     file.close();
     return true;
 }
+
+bool Config::has(const string& key) {
+    return config_.find(key) != config_.end();
+}
