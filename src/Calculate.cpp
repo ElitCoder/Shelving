@@ -38,6 +38,8 @@ static bool calculate_filters(Response& response) {
     for (auto& filter : bank) {
         response = filter.optimize(response, target);
     }
+
+    return true;
 }
 
 bool calculate() {

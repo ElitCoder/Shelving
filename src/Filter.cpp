@@ -14,11 +14,15 @@ Filter::Filter(double freq, double q, double range_low, double range_high,
 
 void Filter::initialize(double gain) {
     // Initialize filter
+    // TODO
+    (void)gain;
 }
 
 Response Filter::optimize(Response& response, const Response& target) {
     // Calculate +- x dB before filter
+    // TODO
     auto best = response.get_flatness(target);
+    (void)best;
 
     // Go through possible gains
     // TODO: Do this better
@@ -26,8 +30,13 @@ Response Filter::optimize(Response& response, const Response& target) {
         initialize(gain);
         response.apply(*this);
     }
+
+    return response;
 }
 
 double Filter::get_gain(double freq) const {
+    // TODO
+    (void)freq;
+
     return 0;
 }

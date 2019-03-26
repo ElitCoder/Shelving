@@ -42,10 +42,15 @@ double Response::get_flatness(const Response& target) const {
         Log(WARN) << "Frequency vectors are not of same size\n";
         return -10000000;
     }
+
+    // TODO
+    return 0;
 }
 
 void Response::apply(const Filter& filter) {
     for (size_t i = 0; i < freqs_.size(); i++) {
         gains_.at(i) += filter.get_gain(freqs_.at(i));
     }
+
+    // TODO
 }
