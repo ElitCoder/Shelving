@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Response.h"
+
 #include <vector>
 #include <string>
 
@@ -8,7 +10,12 @@ public:
     explicit Filter(double freq, double q, double range_low,
                     double range_high, const std::string& type);
 
+    Response optimize(Response& response, const Response& target);
+    double get_gain(double freq) const;
+
 private:
+    void initialize(double gain);
+
     double freq_;
     double gain_;
     double q_;

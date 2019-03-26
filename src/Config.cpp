@@ -99,3 +99,7 @@ bool Config::parse_common(const string& filename) {
 bool Config::has(const string& key) {
     return config_.find(key) != config_.end();
 }
+
+FilterBank Config::get_filter_bank() {
+    return filter_bank_;
+}

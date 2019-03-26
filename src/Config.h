@@ -33,6 +33,8 @@ public:
         return value;
     }
 
+    static FilterBank get_filter_bank();
+
 private:
     static bool add_key(const std::string& key, const std::string& value);
 
