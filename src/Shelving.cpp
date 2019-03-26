@@ -5,22 +5,11 @@
 
 using namespace std;
 
-void print_help(const string& name) {
-    Log(NONE) << "Usage: " << name << " [OPTIONS]\n";
-}
-
-bool parse(int argc, char** argv) {
+bool parse() {
     // Parse common config
     // TODO: Make path dynamic
     if (!Config::parse_common("config/common.conf")) {
         Log(ERR) << "Failed to parse common config\n";
-        return false;
-    }
-
-    // Parse CMD
-    vector<string> args(argv, argv + argc - 1);
-    if (!Config::parse_cmd(argc, args)) {
-        print_help(argv[0]);
         return false;
     }
 
@@ -31,8 +20,8 @@ bool run() {
     return true;
 }
 
-int main(int argc, char** argv) {
-    if (!parse(argc, argv)) {
+int main() {
+    if (!parse()) {
         return false;
     }
 

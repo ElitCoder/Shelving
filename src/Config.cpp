@@ -5,6 +5,9 @@
 
 using namespace std;
 
+// [freq] [q] [range low] [range high] [type]
+const int FILTER_VALUE_TOKENS = 5;
+
 map<string, string> Config::config_;
 FilterBank Config::filter_bank_;
 
@@ -90,9 +93,5 @@ bool Config::parse_common(const string& filename) {
     }
 
     file.close();
-    return true;
-}
-
-bool Config::parse_cmd(int argc, const vector<string>& args) {
     return true;
 }

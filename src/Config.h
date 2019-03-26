@@ -5,12 +5,8 @@
 #include <map>
 #include <vector>
 
-// [freq] [q] [range low] [range high] [type]
-const int FILTER_VALUE_TOKENS = 5;
-
 class Config {
 public:
-    static bool parse_cmd(int argc, const std::vector<std::string>& args);
     static bool parse_common(const std::string& filename);
 
 private:
