@@ -25,7 +25,7 @@ $(OBJ_FOLDER)/%.$(OBJ_POSTFIX): $(SRC_FOLDER)/%.$(CPP_POSTFIX)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(BIN_FOLDER)/* $(OBJ_FOLDER)/*
+	rm -f $(TARGET) $(OBJ_FOLDER)/*
 
 CXXFLAGS	+= -MMD
 -include $(OBJ_FILES:.$(OBJ_POSTFIX)=.$(DEP_POSTFIX)
