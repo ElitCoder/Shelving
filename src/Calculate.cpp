@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Log.h"
 #include "Response.h"
+#include "Optimize.h"
 
 #include <numeric>
 #include <cmath>
@@ -29,15 +30,12 @@ static Response calculate_target(const Response& current) {
     return current;
 }
 
-static bool calculate_filters(Response& response) {
+static bool calculate_filters(const Response& response) {
     // Calculate target
     auto target = calculate_target(response);
 
     // Go through each filter and optimize
-    auto bank = Config::get_filter_bank();
-    for (auto& filter : bank) {
-        response = filter.optimize(response, target);
-    }
+    Optimize::optimize(response, target);
 
     return true;
 }
