@@ -23,6 +23,8 @@ Response Response::parse(const string& filename) {
         return Response();
     }
 
+    Log(DEBUG) << "Starting input parsing..\n";
+
     // Parse in REW format 'freq gain phase'
     vector<double> freqs;
     vector<double> gains;
@@ -43,10 +45,14 @@ Response Response::parse(const string& filename) {
         gains.push_back(gain);
         // Ignore phase
 
+#if 0
         if (lround(freq) % 500 == 0) {
             Log(DEBUG) << "Parsed freq " << freq << " with gain " << gain << " to be at index " << freqs.size() << endl;
         }
+#endif
     }
+
+    Log(DEBUG) << "Input parsing done!\n";
 
     file.close();
     return Response(freqs, gains);

@@ -20,7 +20,7 @@ void Filter::initialize(double gain) {
         double w0 = 2.0 * M_PI * freq_ / Config::get<double>(KEY_FS, 48000);
         double A = pow(10, gain / 40);
         double alpha = sin(w0) / (2 * q_);
-        double beta = sqrt(A) / q_;
+        //double beta = sqrt(A) / q_;
         double a0, a1, a2, b0, b1, b2;
 
         a0 = 1 + alpha/A;
@@ -63,20 +63,28 @@ double Filter::get_gain(double freq) {
 void Filter::apply(Response& response, double gain) {
     initialize(gain);
 
+    #pragma omp parallel for
     for (size_t i = 0; i < response.freqs_.size(); i++) {
         response.gains_.at(i) += get_gain(response.freqs_.at(i));
     }
 }
 
 double Filter::optimize(Response& response, const Response& target) {
-    // Calculate +- x dB before filter
-    // TODO
-    auto best = response.get_flatness(target);
-    auto best_gain = 0; // No filter applied
+    // Ignore this filter if fc is outside of speaker limits
+    if (Config::has(KEY_LOW_LIMIT) && Config::get<double>(KEY_LOW_LIMIT, 20) > freq_) {
+        return 0;
+    }
+    if (Config::has(KEY_HIGH_LIMIT) && Config::get<double>(KEY_HIGH_LIMIT, 20000) < freq_) {
+        return 0;
+    }
+
+    double best = response.get_flatness(target);
+    double best_gain = 0; // No filter applied
+
 
     // Go through possible gains
     // TODO: Do this better
-    for (double gain = range_low_; gain <= range_high_; gain += 1) {
+    for (double gain = range_low_; gain <= range_high_; gain += 0.1) {
         //Log(DEBUG) << "Trying gain " << gain << " for filter with freq " << freq_ << endl;
         auto current_response = response;
         apply(current_response, gain);

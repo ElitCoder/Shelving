@@ -11,7 +11,7 @@ void Optimize::optimize(const Response& response, const Response& target) {
     vector<double> best_gains(bank.size(), 0);
     auto current_response = response;
     for (int i = 0; i < 5 /* ITERATIONS */; i++) {
-        for (int j = 0; j < bank.size(); j++) {
+        for (size_t j = 0; j < bank.size(); j++) {
             auto& filter = bank.at(j);
             auto gain = filter.optimize(current_response, target);
 #if 0

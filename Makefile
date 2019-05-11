@@ -10,9 +10,10 @@ DEP_POSTFIX	:= d
 CPP_FILES	:= $(wildcard $(SRC_FOLDER)/*.$(CPP_POSTFIX))
 OBJ_FILES	:= $(addprefix $(OBJ_FOLDER)/,$(notdir $(CPP_FILES:.$(CPP_POSTFIX)=.$(OBJ_POSTFIX))))
 
-CXXFLAGS	+= -std=c++14 -Wall -Wextra -pedantic-errors
+CXXFLAGS	+= -std=c++14 -Wall -Wextra -pedantic-errors -fopenmp
 CXXFLAGS	+= -g
 #CXXFLAGS	+= -O3
+LDFLAGS		+= -fopenmp
 
 TARGET		:= $(BIN_FOLDER)/$(NAME)
 

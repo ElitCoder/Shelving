@@ -29,7 +29,7 @@ bool run() {
 
 int main() {
     if (!parse()) {
-        return false;
+        return -1;
     }
 
     // Parse commands and execute

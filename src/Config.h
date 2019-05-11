@@ -12,6 +12,7 @@ const std::string KEY_INPUT_TYPE = "input_type";
 const std::string KEY_FS = "fs";
 const std::string KEY_LOW_LIMIT = "low_limit";
 const std::string KEY_HIGH_LIMIT = "high_limit";
+const std::string KEY_TARGET_SPL = "target_spl";
 
 // Values
 const std::string VALUE_INPUT_TYPE_FR = "frequency_response";
