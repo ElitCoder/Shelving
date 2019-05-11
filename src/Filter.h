@@ -25,7 +25,7 @@ private:
     std::string type_;
 
     // Coeffs
-    double b0, b1, b2, a1, a2;
+    std::vector<double> a_, b_;
 };
 
 using FilterBank = std::vector<Filter>;

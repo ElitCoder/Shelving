@@ -5,10 +5,9 @@
 void Optimize::optimize(const Response& response, const Response& target) {
     auto bank = Config::get_filter_bank();
 
-    for (int i = 0; i < 10 /* ITERATIONS */; i++) {
-        auto current_response = response;
-
+    for (int i = 0; i < 1 /* ITERATIONS */; i++) {
         for (auto& filter : bank) {
+            auto current_response = response;
             auto gain = filter.optimize(current_response, target);
         }
 

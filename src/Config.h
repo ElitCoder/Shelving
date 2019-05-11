@@ -9,11 +9,14 @@
 // Keys, perhaps move them somewhere else
 const std::string KEY_INPUT = "input";
 const std::string KEY_INPUT_TYPE = "input_type";
+const std::string KEY_FS = "fs";
 
 // Values
 const std::string VALUE_INPUT_TYPE_FR = "frequency_response";
 const std::string VALUE_INPUT_TYPE_RAW_PINK = "raw_pink";
 const std::string VALUE_INPUT_TYPE_RAW_WHITE = "raw_white";
+// Filter values
+const std::string VALUE_FILTER_PEAKING = "peaking";
 
 class Config {
 public:

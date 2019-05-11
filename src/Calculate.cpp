@@ -27,7 +27,10 @@ double get_sd(const vector<double>& values) {
 }
 
 static Response calculate_target(const Response& current) {
-    return current;
+    auto target = current;
+
+    fill(target.gains_.begin(), target.gains_.end(), 80);
+    return target;
 }
 
 static bool calculate_filters(const Response& response) {

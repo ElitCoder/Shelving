@@ -1,8 +1,11 @@
 #include "Response.h"
 #include "Log.h"
 #include "Filter.h"
+#include "Calculate.h"
 
 #include <fstream>
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -23,8 +26,16 @@ Response Response::parse(const string& filename) {
     vector<double> freqs;
     vector<double> gains;
     while (!file.eof()) {
+        string cmt;
+        file >> cmt;
+        if (cmt.empty() || cmt.front() == '*') {
+            // Comment
+            getline(file, cmt);
+            continue;
+        }
+
         double freq, gain, phase;
-        file >> freq;
+        freq = stod(cmt);
         file >> gain;
         file >> phase;
         freqs.push_back(freq);
@@ -37,12 +48,13 @@ Response Response::parse(const string& filename) {
 }
 
 double Response::get_flatness(const Response& target) const {
-    // Response-objects should have the exact same frequency vectors
-    if (freqs_.size() != target.freqs_.size()) {
-        Log(WARN) << "Frequency vectors are not of same size\n";
-        return -10000000;
+    double sum = 0;
+    for (size_t i = 0; i < target.freqs_.size(); i++) {
+        if (target.freqs_.at(i) < 60 || target.freqs_.at(i) > 15000)
+            continue;
+
+        sum += abs(target.gains_.at(i) - gains_.at(i));
     }
 
-    // TODO
-    return 0;
+    return sum;
 }
