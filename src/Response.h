@@ -13,6 +13,7 @@ public:
 
     static Response parse(const std::string& filename);
     double get_flatness(const Response& target) const;
+    void print() const;
 
     // Use as struct
     std::vector<double> freqs_;

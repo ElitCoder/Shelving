@@ -68,7 +68,7 @@ void Filter::apply(Response& response, double gain) {
     }
 }
 
-double Filter::optimize(const Response& response, const Response& target) {
+double Filter::optimize(Response& response, const Response& target) {
     // Calculate +- x dB before filter
     // TODO
     auto best = response.get_flatness(target);
@@ -88,6 +88,8 @@ double Filter::optimize(const Response& response, const Response& target) {
     }
 
     Log(DEBUG) << "Best gain for " << freq_ << " was " << best_gain << endl;
+
+    apply(response, best_gain);
 
     return best_gain;
 }

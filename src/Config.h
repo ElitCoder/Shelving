@@ -10,6 +10,8 @@
 const std::string KEY_INPUT = "input";
 const std::string KEY_INPUT_TYPE = "input_type";
 const std::string KEY_FS = "fs";
+const std::string KEY_LOW_LIMIT = "low_limit";
+const std::string KEY_HIGH_LIMIT = "high_limit";
 
 // Values
 const std::string VALUE_INPUT_TYPE_FR = "frequency_response";
@@ -22,6 +24,7 @@ class Config {
 public:
     static bool parse_common(const std::string& filename);
     static bool has(const std::string& key);
+    static void set(const std::string& key, const std::string& value);
 
     template<class T>
     static T get(const std::string& key, const T& default_value) {

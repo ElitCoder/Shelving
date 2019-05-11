@@ -103,3 +103,7 @@ bool Config::has(const string& key) {
 FilterBank Config::get_filter_bank() {
     return filter_bank_;
 }
+
+void Config::set(const string& key, const string& value) {
+    config_[key] = value;
+}
