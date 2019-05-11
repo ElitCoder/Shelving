@@ -82,31 +82,32 @@ static Response convert_linear_to_log(const Response& response) {
 
     // TODO: Perhaps add optimization limits here?
     vector<double> log_freqs;
-    int num = 1000; // Amount of points, should be overridable for accuracy
+    int num = Config::get<int>(KEY_DATA_POINTS, 1000); // Amount of points, should be overridable for accuracy
     generate_n(back_inserter(log_freqs), num, Logspace<>(START_LOG, END_LOG, num));
 
     // Map new frequencies to old gains
-    vector<double> log_gains;
-    for (auto& log_freq : log_freqs) {
+    vector<double> log_gains(log_freqs.size(), 0);
+    #pragma omp parallel for
+    for (size_t i = 0; i < log_freqs.size(); i++) {
+        auto& log_freq = log_freqs.at(i);
         // TODO: Add some averaging instead
         int closest_index = -1;
         double closest;
 
-        for (size_t i = 0; i < response.freqs_.size(); i++) {
-            double distance = abs(response.freqs_.at(i) - log_freq);
+        for (size_t j = 0; j < response.freqs_.size(); j++) {
+            double distance = abs(response.freqs_.at(j) - log_freq);
             if (closest_index < 0 || distance < closest) {
-                closest_index = i;
+                closest_index = j;
                 closest = distance;
             }
         }
 
         if (closest_index < 0) {
             Log(WARN) << "Could not find fitting gain to frequency " << log_freq << endl;
-            log_gains.push_back(0);
             continue;
         }
 
-        log_gains.push_back(response.gains_.at(closest_index));
+        log_gains.at(i) = response.gains_.at(closest_index);
     }
 
     Response log_response;
@@ -141,13 +142,16 @@ static Response calculate_target(const Response& current) {
     //auto& log_freqs = target.freqs_;
     auto& log_gains = target.gains_;
 
+    #pragma omp parallel for
     for (size_t i = 0; i < log_gains.size(); i++) {
         double sum = ((double)i / (double)log_gains.size()) * -max_boost;
         //Log(DEBUG) << "Adding " << sum << " for frequency " << log_freqs.at(i) << endl;
         log_gains.at(i) += sum;
     }
 
-    for (auto& gain : log_gains) {
+    #pragma omp parallel for
+    for (size_t i = 0; i < log_gains.size(); i++) {
+        auto& gain = log_gains.at(i);
         gain += max_boost / 2;
     }
 

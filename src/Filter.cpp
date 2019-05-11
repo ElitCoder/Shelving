@@ -84,7 +84,8 @@ double Filter::optimize(Response& response, const Response& target) {
 
     // Go through possible gains
     // TODO: Do this better
-    for (double gain = range_low_; gain <= range_high_; gain += 0.1) {
+    auto accuracy = Config::get(KEY_ACCURACY_LEVEL, 0.5);
+    for (double gain = range_low_; gain <= range_high_; gain += accuracy) {
         //Log(DEBUG) << "Trying gain " << gain << " for filter with freq " << freq_ << endl;
         auto current_response = response;
         apply(current_response, gain);

@@ -13,6 +13,8 @@ const std::string KEY_FS = "fs";
 const std::string KEY_LOW_LIMIT = "low_limit";
 const std::string KEY_HIGH_LIMIT = "high_limit";
 const std::string KEY_TARGET_SPL = "target_spl";
+const std::string KEY_ACCURACY_LEVEL = "accuracy_level";
+const std::string KEY_DATA_POINTS = "data_points";
 
 // Values
 const std::string VALUE_INPUT_TYPE_FR = "frequency_response";

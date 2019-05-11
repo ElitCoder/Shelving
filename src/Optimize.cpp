@@ -10,7 +10,9 @@ void Optimize::optimize(const Response& response, const Response& target) {
 
     vector<double> best_gains(bank.size(), 0);
     auto current_response = response;
-    for (int i = 0; i < 5 /* ITERATIONS */; i++) {
+    for (int i = 0; i < 100 /* ITERATIONS */; i++) {
+        vector<double> iteration_gains(bank.size(), 0);
+
         for (size_t j = 0; j < bank.size(); j++) {
             auto& filter = bank.at(j);
             auto gain = filter.optimize(current_response, target);
@@ -24,9 +26,20 @@ void Optimize::optimize(const Response& response, const Response& target) {
             target.print();
 #endif
             best_gains.at(j) += gain;
+            iteration_gains.at(j) += gain;
         }
 
-        // See current filter status
+        bool done = true;
+        for (auto& gain : iteration_gains) {
+            if (gain != 0) {
+                done = false;
+            }
+        }
+
+        if (done) {
+            // Nothing changed, we're done
+            break;
+        }
     }
 
     Log(DEBUG) << "Best gains: ";
