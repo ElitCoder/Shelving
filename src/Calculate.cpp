@@ -51,7 +51,7 @@ static double auto_target_level(const Response& target) {
     const int VITAL_SPL_LEVEL_HIGH = 2000;
 
     // Set target SPL level from there
-    size_t start, end;
+    size_t start = 0, end = target.freqs_.size() - 1;
     bool set_start = false, set_end = false;
     for (size_t i = 0; i < target.freqs_.size(); i++) {
         if (target.freqs_.at(i) >= VITAL_SPL_LEVEL_LOW && !set_start) {
@@ -64,6 +64,10 @@ static double auto_target_level(const Response& target) {
             set_end = true;
             Log(DEBUG) << "Set end auto target END i to " << i << endl;
         }
+    }
+
+    if (!set_start || !set_end) {
+        Log(WARN) << "Failed to find start or end of target curve, will return average of whole curve\n";
     }
 
     // Average SPL level there
