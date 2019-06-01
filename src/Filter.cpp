@@ -16,12 +16,14 @@ Filter::Filter(double freq, double q, double range_low, double range_high,
 }
 
 void Filter::initialize(double gain) {
+    double w0 = 2.0 * M_PI * freq_ / Config::get<double>(KEY_FS, 48000);
+    double alpha = sin(w0) / (2 * q_);
+    double beta;
+    double A;
+    double a0, a1, a2, b0, b1, b2;
+
     if (type_ == VALUE_FILTER_PEAKING) {
-        double w0 = 2.0 * M_PI * freq_ / Config::get<double>(KEY_FS, 48000);
-        double A = pow(10, gain / 40);
-        double alpha = sin(w0) / (2 * q_);
-        //double beta = sqrt(A) / q_;
-        double a0, a1, a2, b0, b1, b2;
+        A = pow(10, gain / 40);
 
         a0 = 1 + alpha/A;
 		a1 = -2 * cos(w0);
@@ -29,18 +31,43 @@ void Filter::initialize(double gain) {
 		b0 = (1 + alpha * A);
 		b1 = -(2 * cos(w0));
 		b2 = (1 - alpha * A);
+    } else if (type_ == VALUE_FILTER_LOW_SHELF) {
+        // Invert due to algorithm
+        gain = -gain;
+        A = pow(10, gain / 40);
+        beta = sqrt(A) / q_;
 
-        a_.clear();
-        b_.clear();
+        a0 = A * ((A + 1) - (A - 1) * cos(w0) + beta * sin(w0));
+		a1 = 2 * A * ((A -1) - (A + 1) * cos(w0));
+		a2 = A * ((A + 1) - (A - 1) * cos(w0) - beta * sin(w0));
+		b0 = (A + 1) + (A - 1) * cos(w0) + beta * sin(w0);
+		b1 = -2 * ((A - 1) + (A + 1) * cos(w0));
+		b2 = (A + 1) + (A - 1) * cos(w0) - beta * sin(w0);
+    } else if (type_ == VALUE_FILTER_HIGH_SHELF) {
+        // Invert due to algorithm
+        gain = -gain;
+        A = pow(10, gain / 40);
+        beta = sqrt(A) / q_;
 
-        a_.push_back(b0 / a0);
-        b_.push_back(b1 / a0);
-        b_.push_back(b2 / a0);
-        b_.push_back(a1 / a0);
-        b_.push_back(a2 / a0);
+        a0 = A * ((A + 1) + (A - 1) * cos(w0) + beta * sin(w0));
+		a1 = -2 * A * ((A -1) + (A + 1) * cos(w0));
+		a2 = A * ((A + 1) + (A - 1) * cos(w0) - beta * sin(w0));
+		b0 = (A + 1) - (A - 1) * cos(w0) + beta * sin(w0);
+		b1 = 2 * ((A - 1) - (A + 1) * cos(w0));
+		b2 = (A + 1) - (A - 1) * cos(w0) - beta * sin(w0);
     } else {
         Log(WARN) << "Unknown filter type " << type_ << ", ignoring\n";
+        return;
     }
+
+    a_.clear();
+    b_.clear();
+
+    a_.push_back(b0 / a0);
+    b_.push_back(b1 / a0);
+    b_.push_back(b2 / a0);
+    b_.push_back(a1 / a0);
+    b_.push_back(a2 / a0);
 }
 
 double Filter::get_gain(double freq) {
@@ -70,6 +97,7 @@ void Filter::apply(Response& response, double gain) {
 }
 
 double Filter::optimize(Response& response, const Response& target) {
+#if 0
     // Ignore this filter if fc is outside of speaker limits
     if (Config::has(KEY_LOW_LIMIT) && Config::get<double>(KEY_LOW_LIMIT, 20) > freq_) {
         return 0;
@@ -77,15 +105,16 @@ double Filter::optimize(Response& response, const Response& target) {
     if (Config::has(KEY_HIGH_LIMIT) && Config::get<double>(KEY_HIGH_LIMIT, 20000) < freq_) {
         return 0;
     }
+#endif
 
     double best = response.get_flatness(target);
     double best_gain = 0; // No filter applied
-
+    double max_gain = Config::get<double>(KEY_FILTER_MAX_GAIN, range_high_);
 
     // Go through possible gains
     // TODO: Do this better
     auto accuracy = Config::get(KEY_ACCURACY_LEVEL, 0.5);
-    for (double gain = range_low_; gain <= range_high_; gain += accuracy) {
+    for (double gain = range_low_; gain <= max_gain; gain += accuracy) {
         //Log(DEBUG) << "Trying gain " << gain << " for filter with freq " << freq_ << endl;
         auto current_response = response;
         apply(current_response, gain);

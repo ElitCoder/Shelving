@@ -2,6 +2,7 @@
 #include "Log.h"
 #include "Filter.h"
 #include "Calculate.h"
+#include "Config.h"
 
 #include <fstream>
 #include <algorithm>
@@ -61,8 +62,11 @@ Response Response::parse(const string& filename) {
 double Response::get_flatness(const Response& target) const {
     vector<double> diff;
 
+    auto low_limit = Config::get<double>(KEY_LOW_LIMIT, 20);
+    auto high_limit = Config::get<double>(KEY_HIGH_LIMIT, 20000);
+
     for (size_t i = 0; i < target.freqs_.size(); i++) {
-        if (target.freqs_.at(i) < 60 || target.freqs_.at(i) > 20000) {
+        if (target.freqs_.at(i) < low_limit || target.freqs_.at(i) > high_limit) {
             continue;
         }
 
