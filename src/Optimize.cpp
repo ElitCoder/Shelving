@@ -15,7 +15,7 @@ void Optimize::optimize(const Response& response, const Response& target) {
 
         for (size_t j = 0; j < bank.size(); j++) {
             auto& filter = bank.at(j);
-            auto gain = filter.optimize(current_response, target);
+            auto gain = filter.optimize(current_response, target, best_gains.at(j));
 #if 0
             Log(DEBUG) << "For filter " << filter.freq_ << endl;
             Log(DEBUG) << "BEFORE " << response.get_flatness(target) << "\n";

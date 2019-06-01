@@ -96,7 +96,7 @@ void Filter::apply(Response& response, double gain) {
     }
 }
 
-double Filter::optimize(Response& response, const Response& target) {
+double Filter::optimize(Response& response, const Response& target, double current_gain) {
 #if 0
     // Ignore this filter if fc is outside of speaker limits
     if (Config::has(KEY_LOW_LIMIT) && Config::get<double>(KEY_LOW_LIMIT, 20) > freq_) {
@@ -109,12 +109,13 @@ double Filter::optimize(Response& response, const Response& target) {
 
     double best = response.get_flatness(target);
     double best_gain = 0; // No filter applied
-    double max_gain = Config::get<double>(KEY_FILTER_MAX_GAIN, range_high_);
+    double min_gain = range_low_ - current_gain;
+    double max_gain = Config::get<double>(KEY_FILTER_MAX_GAIN, range_high_) - current_gain;
 
     // Go through possible gains
     // TODO: Do this better
     auto accuracy = Config::get(KEY_ACCURACY_LEVEL, 0.5);
-    for (double gain = range_low_; gain <= max_gain; gain += accuracy) {
+    for (double gain = min_gain; gain <= max_gain; gain += accuracy) {
         //Log(DEBUG) << "Trying gain " << gain << " for filter with freq " << freq_ << endl;
         auto current_response = response;
         apply(current_response, gain);

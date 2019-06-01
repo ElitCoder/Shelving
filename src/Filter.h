@@ -10,7 +10,7 @@ public:
     explicit Filter(double freq, double q, double range_low,
                     double range_high, const std::string& type);
 
-    double optimize(Response& response, const Response& target);
+    double optimize(Response& response, const Response& target, double current_gain);
 
 //private:
     void initialize(double gain);
