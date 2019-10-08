@@ -28,6 +28,7 @@ const std::string KEY_HC_SHELF_TREBLE_GAIN = "shelf_treble_gain";
 const std::string KEY_TARGET_LOW_LIMIT = "target_low_limit";
 const std::string KEY_TARGET_HIGH_LIMIT = "target_high_limit";
 const std::string KEY_FILTER_MAX_GAIN = "filter_max_gain";
+const std::string KEY_RESPECT_FREQ_LIMITS = "respect_freq_limits";
 
 // Values
 const std::string VALUE_INPUT_TYPE_FR = "frequency_response";

@@ -97,15 +97,24 @@ void Filter::apply(Response& response, double gain) {
 }
 
 double Filter::optimize(Response& response, const Response& target, double current_gain) {
-#if 0
-    // Ignore this filter if fc is outside of speaker limits
-    if (Config::has(KEY_LOW_LIMIT) && Config::get<double>(KEY_LOW_LIMIT, 20) > freq_) {
-        return 0;
+    if (!Config::has(KEY_RESPECT_FREQ_LIMITS) || Config::get(KEY_RESPECT_FREQ_LIMITS, true)) {
+        // Ignore filter if filter bandwidth is won't affect within limits
+        auto low = Config::get(KEY_LOW_LIMIT, 20);
+        auto high = Config::get(KEY_HIGH_LIMIT, 20000);
+        if (type_ == VALUE_FILTER_HIGH_SHELF) {
+            if (freq_ < low) {
+                return 0;
+            }
+        } else if (type_ == VALUE_FILTER_LOW_SHELF) {
+            if (freq_ > high) {
+                return 0;
+            }
+        } else if (type_ == VALUE_FILTER_PEAKING) {
+            if (freq_ < low || freq_ > high) {
+                return 0;
+            }
+        }
     }
-    if (Config::has(KEY_HIGH_LIMIT) && Config::get<double>(KEY_HIGH_LIMIT, 20000) < freq_) {
-        return 0;
-    }
-#endif
 
     double best = response.get_flatness(target);
     double best_gain = 0; // No filter applied
